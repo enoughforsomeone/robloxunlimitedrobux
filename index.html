@@ -1,0 +1,50 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Cyber Cell | Controller</title>
+<style>
+body{margin:0;padding:25px;background:#080b0a;color:#e1eee5;font:13px monospace}
+main{max-width:520px;margin:auto}
+h1{font-size:38px;font-weight:400}
+p{color:#899b90;line-height:1.8}
+button{width:100%;padding:18px;margin:9px 0;border:1px solid #3c5947;background:#0d1c13;color:#a5ffc0;font:inherit;cursor:pointer}
+button.danger{border-color:#8d343b;color:#ff747c}
+#status{margin-top:20px;color:#61f59b}
+</style>
+</head>
+<body>
+<main>
+ <p>CYBER CELL / AUTHORIZED OPERATOR</p>
+ <h1>Control Panel.</h1>
+ <p>Controls the connected prank webpage only. The recipient should know this is a simulation.</p>
+
+ <button onclick="send('investigate')">01 — INITIATE INVESTIGATION</button>
+ <button class="danger" onclick="send('alert')">02 — TRIGGER RED ALERT</button>
+ <button onclick="send('reveal')">03 — REVEAL PRANK</button>
+ <p id="status">Connection not yet verified.</p>
+</main>
+
+<script type="module">
+import {db,ref,set} from "./firebase.js";
+
+window.send=async function(action){
+ const status=document.getElementById("status");
+ status.textContent="Sending command...";
+
+ try{
+  await set(ref(db,"prank/current"),{
+   action,
+   eventId:crypto.randomUUID(),
+   timestamp:Date.now()
+  });
+  status.textContent="Command sent: "+action.toUpperCase();
+ }catch(error){
+  status.textContent="Connection failed. Check Firebase configuration and permissions.";
+ }
+};
+</script>
+</body>
+</html>
